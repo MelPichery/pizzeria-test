@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.pizzeria.classe.Pizza;
 import com.pizzeria.exception.DeletePizzaException;
+import com.pizzeria.exception.FindPizzaByCodeException;
 import com.pizzeria.exception.SavePizzaException;
 import com.pizzeria.exception.StockageException;
 import com.pizzeria.exception.UpdatePizzaException;
@@ -136,8 +137,9 @@ public class PizzaMemDao implements IPizzaDao {
 	}
 
 
-	public Pizza findPizzaByCode(String codePizza) {
+	public Pizza findPizzaByCode(String codePizza) throws FindPizzaByCodeException {
 
+		
 
 		for (int i = 0; i < pizzas.size(); i++)
 		{
@@ -149,7 +151,8 @@ public class PizzaMemDao implements IPizzaDao {
 			}
 		}
 		
-		return null;
+		throw new FindPizzaByCodeException("Pas trouver de pizza correspondant à ce code");
+		
 		
 	}
 	

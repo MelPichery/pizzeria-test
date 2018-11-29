@@ -3,6 +3,8 @@ package com.pizzeria;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.pizzeria.classe.Pizza;
+import com.pizzeria.exception.FindPizzaByCodeException;
 import com.pizzeria.exception.SavePizzaException;
 import com.pizzeria.model.CategoriePizzaEnum;
 import com.pizzeria.model.PizzaMemDao;
@@ -46,9 +49,12 @@ public class DaoTest {
 		
 	}
 	
+	/**
+	 * Test de la méthode pizzaExists
+	 */
 	//@Ignore
 	@Test
-	public void pizzaExistsTest() throws SavePizzaException {
+	public void pizzaExistsTest() {
 		
 		ptest.setCode("PIZ");
 		
@@ -56,15 +62,22 @@ public class DaoTest {
 		
 	}
 	
+	/**
+	 * Test de l'envoi de l'exception de la méthode findPizzaByCode en cas de null
+	 * @throws SavePizzaException 
+	 */
 	//@Ignore
-	@Test
-	public void findPizzaByCodeTest() {
+	@Test(expected=SavePizzaException.class)
+	public void findPizzaByCodeTest() throws FindPizzaByCodeException {
 				
-		assertNotNull("La pizza n'existe pas",pmd.findPizzaByCode("RER"));
+		pmd.findPizzaByCode(null);
 		
 	}
 	
-	
+	/**
+	 * Test de l'envoi de l'exception de la méthode saveNewPizza en cas de désignation vide
+	 * @throws SavePizzaException
+	 */
 	//@Ignore
 	@Test(expected=SavePizzaException.class)
 	public void designationNotEmptyTest() throws SavePizzaException {
@@ -73,6 +86,10 @@ public class DaoTest {
 				
 	}
 	
+	/**
+	 * Test d'envoi de l'exception de la méthode saveNewPizza en cas de pizza null
+	 * @throws SavePizzaException
+	 */
 	//@Ignore
 	@Test(expected=SavePizzaException.class)
 	public void saveNewPizzaNullTest() throws SavePizzaException {
@@ -81,6 +98,10 @@ public class DaoTest {
 		
 	}
 	
+	/**
+	 * Test d'envoi de l'exception de la méthode saveNewPizza en cas de code pizza qui ne contient pas 3 majuscules
+	 * @throws SavePizzaException
+	 */
 	//@Ignore
 	@Test(expected=SavePizzaException.class)
 	public void code3MajusculesTest() throws SavePizzaException {
@@ -90,14 +111,29 @@ public class DaoTest {
 		//assertTrue(ptest1.getCode().matches("^+[A-Z]+[A-Z]+[A-Z]?[A-Z]$"));
 	}
 	
+	/**
+	 * Test d'envoi de l'exception avec le bon message pour la méthode saveNewPizza en cas de pizza avec un prix négatif
+	 */
 	//@Ignore
-	@Test(expected=SavePizzaException.class)
-	public void prixPositifTest() throws SavePizzaException {
+	@Test
+	public void prixPositifSaveNewPizzaTest() {
 		
-		pmd.saveNewPizza(ptestPrixPositif);
-		//assertTrue(ptest.getPrice()>0);
+		try {
+			
+			pmd.saveNewPizza(ptestPrixPositif);
+			
+		} catch (SavePizzaException e) {
+			
+			assert(e.getMessage().contains("Le prix doit être renseigné"));
+			System.out.println(e.getMessage());
+		}
+
 	}
 	
+	/**
+	 * Test d'envoi de l'exception sur la méthode saveNewPizza pour le cas où le prix n'appartient pas à l'interval
+	 * @throws SavePizzaException
+	 */
 	//@Ignore
 	@Test(expected=SavePizzaException.class)
 	public void prixIntervalTest() throws SavePizzaException {
@@ -106,6 +142,9 @@ public class DaoTest {
 		//assertTrue(ptest.getPrice()>4 && ptest.getPrice()<20);
 	}
 	
+	/**
+	 * Test s'il y a des doublons au niveau de la designation dans la liste de pizza
+	 */
 	//@Ignore
 	@Test
 	public void designationDoublonTest() {
@@ -129,7 +168,9 @@ public class DaoTest {
 		
 	}
 	
-	
+	/**
+	 * Test s'il y a des doublons au niveau du code dans la liste de pizza
+	 */
 	//@Ignore
 	@Test
 	public void codeDoublonTest() {
